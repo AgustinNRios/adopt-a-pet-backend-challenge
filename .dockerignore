@@ -1,0 +1,12 @@
+# Archivos y carpetas que no necesitamos en el contenedor
+node_modules
+npm-debug.log
+.git
+.github
+.gitignore
+.vscode
+.env.example
+README.md
+test
+*.md
+*.log

@@ -1,0 +1,25 @@
+# Dependencias
+node_modules/
+
+# Entorno
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+
+# Directorios de producción
+dist/
+build/
+
+# Testing
+
+# IDEs y editores
+.idea/
+.vscode/
+
+# Docker
+
+src/logs/errors.log
