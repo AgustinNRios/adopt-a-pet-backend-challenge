@@ -5,11 +5,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: adopt-a-pet-test
+    container_name: adopt-a-pet-test-app
     environment:
       - PORT=8080
       - MODE=PROD
-      - MONGO_DB_URL=mongodb://mongodb:27017/adopt-a-pet-test
+      - MONGO_DB_URL=mongodb://mongodb:27017/mongo-test-db-adopt-a-pet
     depends_on:
       - mongodb
     command: >
@@ -22,7 +22,7 @@ services:
 
   mongodb:
     image: mongo:latest
-    container_name: mongodb-adopt-a-pet-test
+    container_name: mongo-test-db-adopt-a-pet
     environment:
       - MONGO_INITDB_DATABASE=adopt-a-pet-test
     ports:
