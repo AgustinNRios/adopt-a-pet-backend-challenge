@@ -1,0 +1,13 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: adopt-a-pet-dev
+    ports:
+      - '8080:8080'
+    environment:
+      - PORT=8080
+      - MODE=DEV
+      - MONGO_DB_URL=mongodb+srv://agustin528rios:QDl5LwH8njfaOlUh@adopt-a-pet-db.df8q6aa.mongodb.net/
+    restart: unless-stopped

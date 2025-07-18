@@ -1,0 +1,48 @@
+openapi: 3.0.0
+
+# Información básica de la API
+info:
+  title: API de Adoptme
+  description: |
+    API completa para la plataforma Adoptme.
+    Permite gestionar mascotas, usuarios, adopciones y datos de prueba.
+  version: 1.0.0
+# Servidores disponibles
+servers:
+  - url: http://localhost:8080/api
+    description: Servidor de desarrollo local
+
+# Tags generales para organizar endpoints
+tags:
+  - name: Sessions
+    description: Operaciones relacionadas con sesiones de usuario y autenticación
+  - name: Pets
+    description: API para la gestión de mascotas
+  - name: Adoptions
+    description: Operaciones relacionadas con adopciones de mascotas
+  - name: Mocks
+    description: Operaciones para generar datos de prueba (mocks)
+  - name: Users
+    description: Api para la gestion de users
+
+# Componentes comunes
+components:
+  # Esquemas de seguridad
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: coderCookie
+      description: Cookie JWT para autenticación de usuarios
+
+    unprotectedCookieAuth:
+      type: apiKey
+      in: cookie
+      name: unprotectedCookie
+      description: Cookie JWT para autenticación no protegida
+
+  # Importar otros componentes
+  schemas:
+    $ref: './components.yaml#/components/schemas'
+  responses:
+    $ref: './components.yaml#/components/responses'

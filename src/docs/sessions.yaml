@@ -1,0 +1,410 @@
+# Este archivo contiene solo los paths y componentes específicos de sesiones
+# La información general, servidores y tags están en openapi.yaml
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Unique identifier for the user
+          example: 60d21b4667d0d8992e610c85
+        first_name:
+          type: string
+          description: User's first name
+          example: John
+        last_name:
+          type: string
+          description: User's last name
+          example: Doe
+        email:
+          type: string
+          description: User's email address
+          example: john.doe@example.com
+        password:
+          type: string
+          description: User's hashed password
+          example: $2b$10$X7EnEJC1wnwRzD1TfKSk2O9X9LkV8RJEm6HxA2rVtGKHX.VUQLW.q
+        last_connection:
+          type: string
+          format: date-time
+          description: Timestamp of user's last connection
+          example: 2023-06-25T12:34:56.789Z
+      required:
+        - first_name
+        - last_name
+        - email
+        - password
+
+    UserRegisterRequest:
+      type: object
+      properties:
+        first_name:
+          type: string
+          description: User's first name
+          example: John
+        last_name:
+          type: string
+          description: User's last name
+          example: Doe
+        email:
+          type: string
+          description: User's email address
+          example: john.doe@example.com
+        password:
+          type: string
+          description: User's password (plain text)
+          example: securePassword123
+      required:
+        - first_name
+        - last_name
+        - email
+        - password
+
+    UserLoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          description: User's email address
+          example: agusadmin@gmail.com
+        password:
+          type: string
+          description: User's password (plain text)
+          example: 123
+      required:
+        - email
+        - password
+
+    UserResponse:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Unique identifier for the user
+          example: 60d21b4667d0d8992e610c85
+        name:
+          type: string
+          description: User's full name
+          example: John Doe
+        email:
+          type: string
+          description: User's email address
+          example: john.doe@example.com
+        role:
+          type: string
+          description: User's role in the system
+          example: user
+      required:
+        - _id
+        - name
+        - email
+        - role
+
+    SuccessResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Status of the operation
+          example: success
+        message:
+          type: string
+          description: Success message
+          example: Logged in
+      required:
+        - status
+
+    RegisterSuccessResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Status of the operation
+          example: success
+        payload:
+          type: string
+          description: User ID of the newly registered user
+          example: 60d21b4667d0d8992e610c85
+      required:
+        - status
+        - payload
+
+    CurrentUserResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Status of the operation
+          example: success
+        payload:
+          $ref: '#/components/schemas/UserResponse'
+      required:
+        - status
+        - payload
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Status of the operation
+          example: error
+        error:
+          type: string
+          description: Error message
+          example: User doesn't exist
+      required:
+        - status
+        - error
+
+  responses:
+    BadRequest:
+      description: Bad request due to invalid or missing parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            IncompleteValues:
+              value:
+                status: error
+                error: Incomplete values
+            UserExists:
+              value:
+
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: error
+            error: User doesn't exist
+
+    Unauthorized:
+      $ref: '../components.yaml#/components/responses/Unauthorized'
+
+    ServerError:
+      $ref: '../components.yaml#/components/responses/ServerError'
+
+paths:
+  /api/sessions/register:
+    post:
+      tags:
+        - Sessions
+      summary: Register a new user
+      description: Creates a new user account with the provided information
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegisterRequest'
+      responses:
+        '201':
+          description: User successfully registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterSuccessResponse'
+              example:
+                status: success
+                payload: 60d21b4667d0d8992e610c85
+          links:
+            LoginUser:
+              operationId: loginUser
+              description: After registering, the user can login with their credentials
+        '400':
+          $ref: '../components.yaml#/components/responses/BadRequest'
+        '500':
+          $ref: '../components.yaml#/components/responses/ServerError'
+
+  /api/sessions/login:
+    post:
+      tags:
+        - Sessions
+      summary: User login
+      description: Authenticates a user and creates a session
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email del usuario
+                  example: agusadmin@gmail.com
+                password:
+                  type: string
+                  description: Contraseña del usuario
+                  example: 123
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: User successfully logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              example:
+                status: success
+                message: Logged in
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: coderCookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...; Path=/; HttpOnly; Max-Age=3600
+          links:
+            GetCurrentUser:
+              operationId: getCurrentUser
+              description: After login, the user can access their profile information
+        '400':
+          $ref: '../components.yaml#/components/responses/BadRequest'
+        '404':
+          $ref: '../components.yaml#/components/responses/NotFound'
+        '500':
+          $ref: '../components.yaml#/components/responses/ServerError'
+
+  /api/sessions/current:
+    get:
+      tags:
+        - Sessions
+      summary: Get current user
+      description: |
+        Returns the information of the currently logged-in user.
+        **IMPORTANTE**: Debes iniciar sesión primero usando el endpoint /api/sessions/login.
+        La cookie de autenticación debe estar presente para que este endpoint funcione correctamente.
+      operationId: getCurrentUser
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Current user information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrentUserResponse'
+              example:
+                status: success
+                payload:
+                  _id: 60d21b4667d0d8992e610c85
+                  name: John Doe
+                  email: john.doe@example.com
+                  role: user
+        '401':
+          $ref: '../components.yaml#/components/responses/Unauthorized'
+        '500':
+          $ref: '../components.yaml#/components/responses/ServerError'
+
+  /api/sessions/unprotectedLogin:
+    get:
+      tags:
+        - Sessions
+      summary: Unprotected login endpoint
+      description: Alternative login endpoint without additional protections (for testing purposes)
+      operationId: unprotectedLogin
+      parameters:
+        - name: email
+          in: query
+          required: true
+          schema:
+            type: string
+          example: john.doe@example.com
+        - name: password
+          in: query
+          required: true
+          schema:
+            type: string
+          example: securePassword123
+      responses:
+        '200':
+          description: User successfully logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              example:
+                status: success
+                message: Unprotected Logged in
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: unprotectedCookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...; Path=/; HttpOnly; Max-Age=3600
+        '400':
+          $ref: '../components.yaml#/components/responses/BadRequest'
+        '404':
+          $ref: '../components.yaml#/components/responses/NotFound'
+        '500':
+          $ref: '../components.yaml#/components/responses/ServerError'
+
+  /api/sessions/unprotectedCurrent:
+    get:
+      tags:
+        - Sessions
+      summary: Get current user (unprotected)
+      description: |
+        Returns the information of the currently logged-in user using the unprotected cookie.
+        **IMPORTANTE**: Debes iniciar sesión primero usando el endpoint /api/sessions/unprotectedLogin.
+        La cookie de autenticación debe estar presente para que este endpoint funcione correctamente.
+      operationId: getUnprotectedCurrentUser
+      security:
+        - unprotectedCookieAuth: []
+      responses:
+        '200':
+          description: Current user information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrentUserResponse'
+              example:
+                status: success
+                payload:
+                  _id: 60d21b4667d0d8992e610c85
+                  name: John Doe
+                  email: john.doe@example.com
+                  role: user
+        '401':
+          $ref: '../components.yaml#/components/responses/Unauthorized'
+        '500':
+          $ref: '../components.yaml#/components/responses/ServerError'
+
+  /api/sessions/logout:
+    post:
+      tags:
+        - Sessions
+      summary: User logout
+      description: Logs out the current user by clearing their session cookie and updating last connection time
+      operationId: logoutUser
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: User successfully logged out
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              example:
+                status: success
+                message: Logged out
+        '400':
+          description: No active session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: error
+                error: No session
+        '500':
+          $ref: '../components.yaml#/components/responses/ServerError'

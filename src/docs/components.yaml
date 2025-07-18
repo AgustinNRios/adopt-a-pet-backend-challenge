@@ -1,0 +1,104 @@
+components:
+  # Respuestas comunes
+  responses:
+    Unauthorized:
+      description: No autorizado. El usuario no está autenticado o no tiene permisos.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: 'error'
+            error: 'Unauthorized'
+
+    NotFound:
+      description: Recurso no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: 'error'
+            error: 'Resource not found'
+
+    ServerError:
+      description: Error interno del servidor
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: 'error'
+            error: 'Internal server error'
+
+    BadRequest:
+      description: Solicitud incorrecta o datos inválidos
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: 'error'
+            error: 'Bad request'
+
+  # Esquemas comunes
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: ['error']
+          description: Estado de la respuesta
+          example: 'error'
+        error:
+          type: string
+          description: Descripción del error
+          example: 'Resource not found'
+      required:
+        - status
+        - error
+
+    SuccessResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: ['success']
+          description: Estado de la respuesta
+          example: 'success'
+        message:
+          type: string
+          description: Mensaje descriptivo del resultado
+          example: 'Operation successful'
+      required:
+        - status
+        - message
+
+    SuccessMessage:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: ['success']
+          description: Estado de la respuesta
+          example: 'success'
+        message:
+          type: string
+          description: Mensaje descriptivo del resultado
+          example: 'Operation successful'
+      required:
+        - status
+        - message
+
+    # Parámetros comunes
+  parameters:
+    IdParam:
+      name: id
+      in: path
+      description: ID del recurso
+      required: true
+      schema:
+        type: string
+        format: ObjectId
+      example: '60d0fe4f5311236168a109ca'

@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: adopt-a-pet-test
+    environment:
+      - PORT=8080
+      - MODE=PROD
+      - MONGO_DB_URL=mongodb://mongodb:27017/adopt-a-pet-test
+    depends_on:
+      - mongodb
+    command: >
+      sh -c "npm install --include=dev && 
+             NODE_OPTIONS='--import=tsx' npx mocha 'tests/*.test.ts'"
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb-adopt-a-pet-test
+    environment:
+      - MONGO_INITDB_DATABASE=adopt-a-pet-test
+    ports:
+      - '27017:27017'
+    restart: "no"

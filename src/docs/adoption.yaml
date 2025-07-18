@@ -1,0 +1,193 @@
+paths:
+  /api/adoptions:
+    get:
+      tags:
+        - Adoptions
+      summary: Obtener todas las adopciones
+      description: Retorna un listado de todas las adopciones registradas en el sistema
+      operationId: getAllAdoptions
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Lista de adopciones obtenida correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdoptionsListResponse'
+              examples:
+                default:
+                  $ref: '#/components/schemas/AdoptionsListResponse'
+
+  /api/adoptions/{aid}:
+    get:
+      tags:
+        - Adoptions
+      summary: Obtener una adopción específica
+      description: Retorna la información detallada de una adopción según su ID
+      operationId: getAdoption
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: aid
+          in: path
+          description: ID de la adopción a consultar
+          required: true
+          schema:
+            type: string
+            format: ObjectId
+          example: '685dfce617e29ff086ccf94f'
+      responses:
+        '200':
+          description: Adopción encontrada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdoptionResponse'
+              example:
+                status: 'success'
+                payload:
+                  _id: '60d21b4667d0d8992e610c85'
+                  owner: '60d21b4667d0d8992e610c80'
+                  pet: '60d21b4667d0d8992e610c82'
+                  createdAt: '2023-06-22T15:24:25.000Z'
+        '404':
+          description: Adopción no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: 'error'
+                error: 'Adoption not found'
+
+  /api/adoptions/{uid}/{pid}:
+    post:
+      tags:
+        - Adoptions
+      summary: Crear una nueva adopción
+      description: |
+        Registra una nueva adopción asociando un usuario con una mascota.
+        Actualiza el estado de la mascota a 'adoptada' y la vincula al usuario.
+      operationId: createAdoption
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: uid
+          in: path
+          description: ID del usuario que adopta
+          required: true
+          schema:
+            type: string
+            format: ObjectId
+          example: '60d21b4667d0d8992e610c80'
+        - name: pid
+          in: path
+          description: ID de la mascota a adoptar
+          required: true
+          schema:
+            type: string
+            format: ObjectId
+          example: '60d21b4667d0d8992e610c82'
+      responses:
+        '200':
+          description: Adopción creada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              example:
+                status: 'success'
+                message: 'Pet adopted'
+          links:
+            GetAdoption:
+              operationId: getAdoption
+              parameters:
+                aid: '$response.body.payload._id'
+              description: >-
+                El ID de la adopción creada puede usarse para consultar sus detalles
+        '400':
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                petAlreadyAdopted:
+                  value:
+                    status: 'error'
+                    error: 'Pet is already adopted'
+        '404':
+          description: Usuario o mascota no encontrados
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                userNotFound:
+                  value:
+                    status: 'error'
+                    error: 'User not found'
+                petNotFound:
+                  value:
+                    status: 'error'
+                    error: 'Pet not found'
+
+components:
+  schemas:
+    Adoption:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: ObjectId
+          description: Identificador único de la adopción
+          example: '685dfce617e29ff086ccf94f'
+        owner:
+          type: string
+          format: ObjectId
+          description: ID del usuario que adoptó la mascota
+          example: '60d21b4667d0d8992e610c80'
+        pet:
+          type: string
+          format: ObjectId
+          description: ID de la mascota adoptada
+          example: '60d21b4667d0d8992e610c82'
+        __v:
+          type: number
+          description: Version de la adopción
+          example: 0
+      required:
+        - owner
+        - pet
+
+    AdoptionsListResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: ['success']
+          description: Estado de la respuesta
+          example: 'success'
+        payload:
+          type: array
+          description: Lista de adopciones
+          items:
+            $ref: '#/components/schemas/Adoption'
+      required:
+        - status
+        - payload
+
+    AdoptionResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: ['success']
+          description: Estado de la respuesta
+          example: 'success'
+        payload:
+          $ref: '#/components/schemas/Adoption'
+      required:
+        - status
+        - payload

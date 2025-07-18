@@ -1,0 +1,343 @@
+paths:
+  /api/mocks/mockingpets:
+    get:
+      tags:
+        - Mocks
+      summary: Generar mascotas ficticias
+      description: |
+        Crea 100 mascotas ficticias con datos aleatorios para pruebas.
+        Las mascotas generadas se guardan en la base de datos.
+      operationId: mockingPets
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Mascotas ficticias generadas correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MockPetsResponse'
+              example:
+                status: 'success'
+                payload:
+                  [
+                    {
+                      name: 'Fluffy',
+                      specie: 'cat',
+                      birthDate: '2020-05-10T10:30:00.000Z',
+                      adopted: false,
+                      image: 'https://loremflickr.com/320/240/pet',
+                    },
+                    {
+                      name: 'Rex',
+                      specie: 'dog',
+                      birthDate: '2019-03-15T14:20:00.000Z',
+                      adopted: false,
+                      image: 'https://loremflickr.com/320/240/pet',
+                    },
+                  ]
+        '401':
+          $ref: '../components.yaml#/components/responses/Unauthorized'
+        '500':
+          description: Error al generar mascotas ficticias
+          content:
+            application/json:
+              schema:
+                $ref: '../components.yaml#/components/schemas/ErrorResponse'
+              example:
+                status: 'error'
+                error: 'Failed to generate pets'
+
+  /api/mocks/mockingusers:
+    get:
+      tags:
+        - Mocks
+      summary: Generar usuarios ficticios
+      description: |
+        Crea 50 usuarios ficticios con datos aleatorios para pruebas.
+        Los usuarios generados incluyen campos compatibles con MongoDB como _id, __v, last_connection y documents.
+      operationId: mockingUsers
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Usuarios ficticios generados correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MockUsersResponse'
+              example:
+                status: 'success'
+                payload:
+                  [
+                    {
+                      _id: '6579f48e9b0c5d8a0c5e0b1a',
+                      first_name: 'John',
+                      last_name: 'Doe',
+                      email: 'john.doe@example.com',
+                      password: '$2b$10$X7ZYdD6A2Y3X9pX9X7ZYdD6A2Y3X9pX9',
+                      role: 'user',
+                      pets: [],
+                      __v: 0,
+                      last_connection: '2023-12-15T10:30:00.000Z',
+                      documents: [],
+                    },
+                    {
+                      _id: '6579f48e9b0c5d8a0c5e0b1b',
+                      first_name: 'Jane',
+                      last_name: 'Smith',
+                      email: 'jane.smith@example.com',
+                      password: '$2b$10$X7ZYdD6A2Y3X9pX9X7ZYdD6A2Y3X9pX9',
+                      role: 'admin',
+                      pets: [],
+                      __v: 0,
+                      last_connection: '2023-12-14T15:45:00.000Z',
+                      documents: [],
+                    },
+                  ]
+
+  /api/mocks/generateData:
+    post:
+      tags:
+        - Mocks
+      summary: Generar datos ficticios (usuarios y mascotas)
+      description: |
+        Crea tanto usuarios como mascotas ficticios con datos aleatorios para pruebas.
+        Se puede especificar la cantidad de cada uno.
+      operationId: generateData
+      security:
+        - cookieAuth: []
+      requestBody:
+        description: Configuración para la generación de datos
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                users:
+                  type: integer
+                  description: Número de usuarios a generar
+                  default: 0
+                  example: 5
+                pets:
+                  type: integer
+                  description: Número de mascotas a generar
+                  default: 0
+                  example: 10
+            example:
+              users: 5
+              pets: 10
+      responses:
+        '200':
+          description: Datos ficticios generados correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MockDataResponse'
+              example:
+                status: 'success'
+                payload:
+                  users:
+                    - first_name: 'John'
+                      last_name: 'Doe'
+                      email: 'john.doe@example.com'
+                      password: '$2b$10$X7ZYdD6A2Y3X9pX9X7ZYdD6A2Y3X9pX9'
+                      role: 'user'
+                      pets: []
+                  pets:
+                    - name: 'Fluffy'
+                      specie: 'cat'
+                      birthDate: '2020-05-10T10:30:00.000Z'
+                      adopted: false
+                      image: 'https://loremflickr.com/320/240/pet'
+        '401':
+          $ref: '../components.yaml#/components/responses/Unauthorized'
+        '500':
+          description: Error al generar datos ficticios
+          content:
+            application/json:
+              schema:
+                $ref: '../components.yaml#/components/schemas/ErrorResponse'
+              example:
+                status: 'error'
+                error: 'Failed to generate data'
+
+components:
+  schemas:
+    MockPet:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Nombre de la mascota
+          example: 'Fluffy'
+        specie:
+          type: string
+          description: Especie de la mascota
+          example: 'cat'
+        birthDate:
+          type: string
+          format: date-time
+          description: Fecha de nacimiento de la mascota
+          example: '2020-05-10T10:30:00.000Z'
+        adopted:
+          type: boolean
+          description: Indica si la mascota ha sido adoptada
+          default: false
+          example: false
+        image:
+          type: string
+          format: uri
+          description: URL de la imagen de la mascota
+          example: 'https://loremflickr.com/320/240/pet'
+      required:
+        - name
+        - specie
+        - birthDate
+        - adopted
+
+    MockUser:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: ObjectId
+          description: ID único de MongoDB
+          example: '6579f48e9b0c5d8a0c5e0b1a'
+        first_name:
+          type: string
+          description: Nombre del usuario
+          example: 'John'
+        last_name:
+          type: string
+          description: Apellido del usuario
+          example: 'Doe'
+        email:
+          type: string
+          format: email
+          description: Correo electrónico del usuario
+          example: 'john.doe@example.com'
+        password:
+          type: string
+          description: Contraseña hasheada del usuario
+          example: '$2b$10$X7ZYdD6A2Y3X9pX9X7ZYdD6A2Y3X9pX9'
+        role:
+          type: string
+          enum: ['user', 'admin']
+          description: Rol del usuario
+          example: 'user'
+        pets:
+          type: array
+          description: Lista de IDs de mascotas asociadas al usuario
+          items:
+            type: string
+            format: ObjectId
+          default: []
+          example: []
+        __v:
+          type: integer
+          description: Versión del documento en MongoDB
+          default: 0
+          example: 0
+        last_connection:
+          type: string
+          format: date-time
+          description: Fecha de la última conexión del usuario
+          example: '2023-12-15T10:30:00.000Z'
+        documents:
+          type: array
+          description: Documentos asociados al usuario
+          items:
+            type: object
+          default: []
+          example: []
+      required:
+        - first_name
+        - last_name
+        - email
+        - password
+        - role
+
+    MockPetsResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: ['success']
+          description: Estado de la respuesta
+          example: 'success'
+        payload:
+          type: array
+          description: Lista de mascotas generadas
+          items:
+            $ref: '#/components/schemas/MockPet'
+      required:
+        - status
+        - payload
+
+    MockUsersResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: ['success']
+          description: Estado de la respuesta
+          example: 'success'
+        payload:
+          type: array
+          description: Lista de usuarios generados
+          items:
+            $ref: '#/components/schemas/MockUser'
+      required:
+        - status
+        - payload
+
+    MockDataResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: ['success']
+          description: Estado de la respuesta
+          example: 'success'
+        payload:
+          type: object
+          properties:
+            users:
+              type: array
+              description: Lista de usuarios generados
+              items:
+                $ref: '#/components/schemas/MockUser'
+            pets:
+              type: array
+              description: Lista de mascotas generadas
+              items:
+                $ref: '#/components/schemas/MockPet'
+          required:
+            - users
+            - pets
+      required:
+        - status
+        - payload
+
+  responses:
+    Unauthorized:
+      description: No autorizado. El usuario no está autenticado o no tiene permisos.
+      content:
+        application/json:
+          schema:
+            $ref: '../components.yaml#/components/schemas/ErrorResponse'
+          example:
+            status: 'error'
+            error: 'Unauthorized'
+
+    ServerError:
+      description: Error interno del servidor
+      content:
+        application/json:
+          schema:
+            $ref: '../components.yaml#/components/schemas/ErrorResponse'
+          example:
+            status: 'error'
+            error: 'Internal server error'

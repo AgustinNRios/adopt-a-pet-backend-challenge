@@ -1,0 +1,253 @@
+# Definiciones de rutas para el módulo de usuarios
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: ID único de MongoDB
+        first_name:
+          type: string
+          description: Nombre del usuario
+        last_name:
+          type: string
+          description: Apellido del usuario
+        email:
+          type: string
+          description: Correo electrónico del usuario (único)
+        documents:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: Nombre del documento
+              reference:
+                type: string
+                description: Ruta del documento
+        role:
+          type: string
+          description: 'Rol del usuario (default: user)'
+        pets:
+          type: array
+          items:
+            type: object
+            properties:
+              _id:
+                type: string
+                description: ID de la mascota
+        last_connection:
+          type: string
+          format: date-time
+          description: Fecha de última conexión
+
+paths:
+  /api/users:
+    get:
+      summary: Obtiene todos los usuarios
+      tags:
+        - Users
+      responses:
+        '200':
+          description: Lista de usuarios recuperada con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  payload:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+          links:
+            getUserById:
+              operationId: getUserById
+              description: >-
+                El ID de usuario obtenido en la respuesta puede usarse para obtener
+                detalles específicos de un usuario
+              parameters:
+                uid: '$response.body#/payload/0/_id'
+
+        '500':
+          description: Error interno del servidor
+
+  /api/users/{uid}:
+    get:
+      summary: Obtiene un usuario por ID
+      tags:
+        - Users
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          description: ID del usuario
+          schema:
+            type: string
+      operationId: getUserById
+      responses:
+        '200':
+          description: Usuario encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  payload:
+                    $ref: '#/components/schemas/User'
+          links:
+            updateUser:
+              operationId: updateUser
+              description: >-
+                El ID de usuario obtenido puede usarse para actualizar los datos del usuario
+              parameters:
+                uid: '$response.body#/payload/_id'
+            deleteUser:
+              operationId: deleteUser
+              description: >-
+                El ID de usuario obtenido puede usarse para eliminar el usuario
+              parameters:
+                uid: '$response.body#/payload/_id'
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: string
+                    example: User not found
+
+    put:
+      summary: Actualiza un usuario por ID
+      operationId: updateUser
+      tags:
+        - Users
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          description: ID del usuario
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                email:
+                  type: string
+      responses:
+        '200':
+          description: Usuario actualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: User updated
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  error:
+                    type: string
+                    example: User not found
+
+    delete:
+      summary: Elimina un usuario por ID
+      operationId: deleteUser
+      tags:
+        - Users
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          description: ID del usuario
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Usuario eliminado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: User deleted
+        '404':
+          description: Usuario no encontrado
+
+  /api/users/{uid}/documents:
+    post:
+      summary: Sube uno o varios documentos para un usuario
+      tags:
+        - Users
+      parameters:
+        - name: uid
+          in: path
+          required: true
+          description: ID del usuario
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                documents:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: Archivos a subir
+      responses:
+        '200':
+          description: Documentos subidos exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Documents uploaded successfully
