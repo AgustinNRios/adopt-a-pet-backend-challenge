@@ -10,6 +10,12 @@ Este es un challenge de backend basado en la adopción de mascotas.
 - Swagger para documentación
 - Docker para la reproducibilidad
 
+## Badges
+
+This badge represents that the project has passed the Circle CI pipelines, and the tests were run on a separate server.
+
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/AgustinNRios/adopt-a-pet-backend-challenge/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/AgustinNRios/adopt-a-pet-backend-challenge/tree/main)
+
 ## How to run the APP
 ### in bash / Git-bash
 ```
