@@ -10,12 +10,16 @@ jobs:
         environment:
           MONGO_DB_URL: mongodb://localhost:27017/adoptme_test
           COVERALLS_REPO_TOKEN: AznMYbzBxdcxcfBMg8x9oVfoN9ZRNV3Ox
-      - image: cimg/mongo:7.0
+      - image: mongo:7.0
     executor: node/default
     steps:
       - checkout
       - node/install-packages:
           pkg-manager: npm
+      - run:
+          name: Wait for MongoDB
+          command: |
+            dockerize -wait tcp://localhost:27017 -timeout 1m
       - run:
           command: COVERALLS_REPO_TOKEN=AznMYbzBxdcxcfBMg8x9oVfoN9ZRNV3Ox npm run test:cov
           name: Run tests
