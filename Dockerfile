@@ -20,9 +20,8 @@ RUN npm install
 
 # 5. Copia el código fuente de la aplicación al contenedor
 COPY ./src ./src
-COPY .env ./
-# Copiamos tanto la carpeta src como el archivo server.js y el archivo .env
-# ya que son necesarios para la ejecución de la aplicación.
+# Las variables de entorno se pasan a través de docker-compose
+# No copiamos el archivo .env porque se configuran las variables en docker-compose
 
 # 6. Expone el puerto 8080 (el que usa tu aplicación según la configuración)
 EXPOSE 8080
