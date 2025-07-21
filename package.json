@@ -8,6 +8,7 @@
     "start": "tsx src/server.ts",
     "test": "cross-env NODE_OPTIONS=--import=tsx mocha --loader tsx tests/**/*.test.ts",
     "test:coverage": "c8 --reporter=lcov --reporter=text-summary npm test",
+    "test:cov:report": " npx c8 --reporter=text --reporter=lcov npm test",
     "test:cov": "npm run test:coverage && coveralls < ./coverage/lcov.info",
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
