@@ -15,6 +15,9 @@ dist/
 build/
 
 # Testing
+coverage/
+.nyc_output/
+*.lcov
 
 # IDEs y editores
 .idea/
