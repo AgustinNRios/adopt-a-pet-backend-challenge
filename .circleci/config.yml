@@ -6,7 +6,7 @@ orbs:
 jobs:
   build_and_test:
     machine:
-      image: ubuntu-2204:2023.07.1
+      image: ubuntu-2004:current
     steps:
       - checkout
       - docker/install-docker-compose
