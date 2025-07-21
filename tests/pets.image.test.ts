@@ -33,6 +33,7 @@ describe('Pruebas de integración en /api/pets/withimage', () => {
       .attach('image', './tests/files/coderDog.jpg');
 
     expect(result.status).to.be.eql(200);
-    expect(result.body.payload).to.have.property('_id');
+    expect({}).to.have.property('_id');
+    // expect(result.body.payload).to.have.property('_id');
   });
 });
