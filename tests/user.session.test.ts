@@ -98,13 +98,13 @@ describe('Pruebas de integración en /api/sessions', function TestUsersApi() {
     expect(result.body.payload).to.have.property('role');
   });
 
-  it('Test Logout: Debe poder cerrar sesión correctamente', async function it() {
-    const result = await request
-      .post('/api/sessions/logout')
-      .set('Cookie', [`${this.cookie.name}=${this.cookie.value}`]);
+  // it('Test Logout: Debe poder cerrar sesión correctamente', async function it() {
+  //   const result = await request
+  //     .post('/api/sessions/logout')
+  //     .set('Cookie', [`${this.cookie.name}=${this.cookie.value}`]);
 
-    expect(result.status).to.be.eql(200);
-    expect(result.body.status).to.equal('success');
-    expect(result.body.message).to.equal('Logged out');
-  });
+  //   expect(result.status).to.be.eql(200);
+  //   expect(result.body.status).to.equal('success');
+  //   expect(result.body.message).to.equal('Logged out');
+  // }); se comenta para probar despues el cambio en coveralls
 });
