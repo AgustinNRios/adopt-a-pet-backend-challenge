@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 
 import PetDTO from '../dto/Pet.dto';
 import { petsService } from '../services/index';
-import __dirname from '../utils/index';
 
 const getAllPets = async (req: Request, res: Response) => {
   const pets = await petsService.getAll();
@@ -49,7 +48,7 @@ const createPetWithImage = async (req: Request, res: Response) => {
     specie,
     birthDate,
     adopted: false,
-    image: `${__dirname}/../public/img/pets/${file.filename}`,
+    image: `/public/img/pets/${file.filename}`, // Ruta relativa que funciona en todos los entornos
   });
   const result = await petsService.create(pet);
   res.send({ status: 'success', payload: result });
