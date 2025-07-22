@@ -16,6 +16,13 @@ This badge represents that the project has passed the Circle CI pipelines, and t
 
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/AgustinNRios/adopt-a-pet-backend-challenge/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/AgustinNRios/adopt-a-pet-backend-challenge/tree/main)
 
+This badge represents that the project has passed the Circle CI pipelines, and the tests were run on a remote server.
+
+[![Coverage Status](https://coveralls.io/repos/github/AgustinNRios/adopt-a-pet-backend-challenge/badge.svg?branch=main)](https://coveralls.io/github/AgustinNRios/adopt-a-pet-backend-challenge?branch=main)
+
+This badge shows the code coverage percentage of the project's tests, indicating how much of the codebase is covered by automated tests.
+
+
 ## How to run the APP
 ### in bash / Git-bash
 ```
