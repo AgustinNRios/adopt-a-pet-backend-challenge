@@ -18,7 +18,7 @@
     "format:check": "prettier --check ."
   },
   "c8": {
-    "check-coverage": false,
+    "check-coverage": true,
     "include": [
       "src/**/*.ts"
     ],
@@ -26,8 +26,14 @@
       "**/*.d.ts",
       "**/*.test.ts",
       "**/*.spec.ts",
+      "**/interfaces/**",
+      "**/types/**",
+      "**/*.interface.ts",
+      "**/*.type.ts",
+      "**/I[A-Z]*.ts",
       "tests/**",
-      "coverage/**"
+      "coverage/**",
+      "src/config/swagger.ts"
     ],
     "reporter": [
       "lcov",
