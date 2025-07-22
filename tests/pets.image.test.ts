@@ -109,7 +109,7 @@ describe('Pruebas de integración en /api/pets/withimage', () => {
         .field('name', mockPet.name)
         .field('specie', mockPet.specie)
         .field('birthDate', mockPet.birthDate)
-        .attach('image', './tests/files/coderDog.jpg');
+        .attach('image', './src/public/img/testImgs/coderDog.jpg');
 
       expect(result.status).to.be.eql(200);
       expect(result.body.payload).to.have.property('_id');
