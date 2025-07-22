@@ -1,8 +1,8 @@
 //  TS(7016): Could not find a declaration file for module 'mult... Remove this comment to see the full error message
+import path from 'path';
+
 import { Request } from 'express';
 import multer, { StorageEngine } from 'multer';
-
-import __dirname from './index';
 
 // Función para crear storage configurado según tipo de archivo
 const createStorage = (folder: string): StorageEngine =>
@@ -12,7 +12,8 @@ const createStorage = (folder: string): StorageEngine =>
       file: Express.Multer.File,
       cb: (error: Error | null, destination: string) => void,
     ): void {
-      cb(null, `${__dirname}/../public/${folder}`);
+      // Usar path.join y process.cwd() para crear rutas absolutas que funcionen en todos los entornos
+      cb(null, path.join(process.cwd(), 'src', 'public', folder));
     },
     filename(
       req: Request,
