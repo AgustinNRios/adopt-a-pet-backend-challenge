@@ -15,7 +15,7 @@ const createPet = async (req: Request, res: Response) => {
     res.status(400).send({ status: 'error', error: 'Incomplete values' });
     return;
   }
-  const pet = PetDTO.getPetInputFrom({ name, specie, birthDate });
+  const pet = PetDTO.getPetInputFrom({ name, specie, birthDate, adopted: false });
   const result = await petsService.create(pet);
   res.send({ status: 'success', payload: result });
 };
@@ -48,14 +48,26 @@ const createPetWithImage = async (req: Request, res: Response) => {
     name,
     specie,
     birthDate,
+    adopted: false,
     image: `${__dirname}/../public/img/pets/${file.filename}`,
   });
   const result = await petsService.create(pet);
   res.send({ status: 'success', payload: result });
 };
 
+const getPet = async (req: Request, res: Response) => {
+  const petId = req.params.pid;
+  const pet = await petsService.getBy({ _id: petId });
+  if (!pet) {
+    res.status(404).send({ status: 'error', error: 'Pet not found' });
+    return;
+  }
+  res.send({ status: 'success', payload: pet });
+};
+
 export default {
   getAllPets,
+  getPet,
   createPet,
   updatePet,
   deletePet,

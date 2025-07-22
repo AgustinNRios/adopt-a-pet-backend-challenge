@@ -20,23 +20,31 @@ const getAdoption = async (req: Request, res: Response): Promise<void> => {
 const createAdoption = async (req: Request, res: Response): Promise<void> => {
   const { uid, pid } = req.params;
   const user = await usersService.getUserById(uid);
-  if (!user) {
-    res.status(404).send({ status: 'error', error: 'user Not found' });
+  if (!user || !user._id) {
+    res.status(404).send({ status: 'error', error: 'User not found or invalid' });
     return;
   }
   const pet = await petsService.getBy({ _id: pid });
-  if (!pet) {
-    res.status(404).send({ status: 'error', error: 'Pet not found' });
+  if (!pet || !pet._id) {
+    res.status(404).send({ status: 'error', error: 'Pet not found or invalid' });
     return;
   }
   if (pet.adopted) {
     res.status(400).send({ status: 'error', error: 'Pet is already adopted' });
     return;
   }
-  user.pets.push(pet._id);
-  await usersService.update(user._id, { pets: user.pets });
-  await petsService.update(pet._id, { adopted: true, owner: user._id });
-  await adoptionsService.create({ owner: user._id, pet: pet._id });
+
+  // Asegurar que pets sea un array de objetos con propiedad _id
+  const userPets = user.pets || [];
+  userPets.push({ _id: pet._id });
+
+  // Convertir IDs a string para asegurar compatibilidad con la interfaz
+  const userId = String(user._id);
+  const petId = String(pet._id);
+
+  await usersService.update(userId, { pets: userPets });
+  await petsService.update(petId, { adopted: true, owner: userId });
+  await adoptionsService.create({ owner: userId, pet: petId });
   res.send({ status: 'success', message: 'Pet adopted' });
 };
 

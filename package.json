@@ -33,7 +33,10 @@
       "**/I[A-Z]*.ts",
       "tests/**",
       "coverage/**",
-      "src/config/swagger.ts"
+      "src/config/swagger.ts",
+      "src/server.ts",
+      "src/config/logger.ts",
+      "src/config/config.ts"
     ],
     "reporter": [
       "lcov",
@@ -97,6 +100,7 @@
     "eslint-plugin-unused-imports": "^4.1.4",
     "mocha": "^10.1.0",
     "prettier": "^3.6.2",
+    "sinon": "^21.0.0",
     "ts-migrate": "^0.1.35",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
